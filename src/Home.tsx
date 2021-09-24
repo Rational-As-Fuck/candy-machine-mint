@@ -3,7 +3,6 @@ import styled from "styled-components";
 import Countdown from "react-countdown";
 import { Button, CircularProgress, Snackbar,} from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardMedia from '@material-ui/core/CardMedia';
@@ -11,20 +10,10 @@ import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Collapse from '@material-ui/core/Collapse';
 import Avatar from '@material-ui/core/Avatar';
-import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import { red } from '@material-ui/core/colors';
-//import FavoriteIcon from '@material-ui/icons/Favorite';
-import ShareIcon from '@material-ui/icons/Share';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-
 import Alert from "@material-ui/lab/Alert";
-
 import * as anchor from "@project-serum/anchor";
-
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
-
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletDialogButton } from "@solana/wallet-adapter-material-ui";
 
@@ -36,12 +25,13 @@ import {
   shortenAddress,
 } from "./candy-machine";
 
-//import { mergeClasses } from "@material-ui/styles";
-//import { isClassExpression } from "typescript";
-
 const useStyles = makeStyles((theme) => ({
   root: {
     maxWidth: 345,
+    color: "rgba(255, 255, 255, 0.71)",
+    transition: "boxShadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+    backgroundColor: "rgba(60,229,190,0.26)",
+    fontWeight: "bold"
   },
   media: {
     height: 0,
@@ -58,7 +48,8 @@ const useStyles = makeStyles((theme) => ({
     transform: 'rotate(180deg)',
   },
   avatar: {
-    backgroundColor: red[500],
+    background: "transparent",
+    borderRadius: 0
   },
 }));
 
@@ -68,7 +59,13 @@ const CounterText = styled.span``; // add your styles here
 
 const MintContainer = styled.div``; // add your styles here
 
-const MintButton = styled(Button)``; // add your styles here
+const MintButton = styled(Button)`
+  color:"#fff",
+  backgroundColor:"#40babc",
+  borderRadius: 5px,
+  -mozBorderRadius: 5px,
+  -webkitBorderRadius: 5px
+`; // add your styles here
 
 export interface HomeProps {
   candyMachineId: anchor.web3.PublicKey;
@@ -229,14 +226,9 @@ const Home = (props: HomeProps) => {
     <Card className={classes.root}>
       <CardHeader
         avatar={
-          <Avatar aria-label="recipe" className={classes.avatar}>
+          <Avatar alt="RAF Logo" src="https://4kakucbbbh2sggtgmaasfavoykp42r7cxqyxdu5ngdqsa3n5tjfa.arweave.net/4oCqCCEJ9SMaZmABIoKuwp_NR-K8MXHTrTDhIG29mko" aria-label="RAF Logo" className={classes.avatar}>
             RAF
           </Avatar>
-        }
-        action={
-          <IconButton aria-label="settings">
-            <MoreVertIcon />
-          </IconButton>
         }
         title="Kodama Mint"
         subheader="On sale 9/23/2021"
@@ -248,7 +240,8 @@ const Home = (props: HomeProps) => {
       />
       <CardContent>
         <Typography variant="body2" color="textSecondary" component="p">
-          This is the best little ghostie you'll ever see!
+        <h3>Price: 0.888 SOL</h3>
+        Connect your Solana Wallet, then click “Mint” and a random Kodama will be transferred to your wallet.
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
@@ -280,7 +273,7 @@ const Home = (props: HomeProps) => {
           </MintButton>
         )}
       </MintContainer>
-        <IconButton aria-label="share">
+{/*}        <IconButton aria-label="share">
           <ShareIcon />
         </IconButton>
         <IconButton
@@ -293,7 +286,8 @@ const Home = (props: HomeProps) => {
         >
           <ExpandMoreIcon />
         </IconButton>
-      </CardActions>
+        {*/}
+        </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
             <Typography paragraph>
