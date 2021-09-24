@@ -1,7 +1,24 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Countdown from "react-countdown";
 import { Button, CircularProgress, Snackbar,} from "@material-ui/core";
+import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import CardMedia from '@material-ui/core/CardMedia';
+import CardContent from '@material-ui/core/CardContent';
+import CardActions from '@material-ui/core/CardActions';
+import Collapse from '@material-ui/core/Collapse';
+import Avatar from '@material-ui/core/Avatar';
+import IconButton from '@material-ui/core/IconButton';
+import Typography from '@material-ui/core/Typography';
+import { red } from '@material-ui/core/colors';
+//import FavoriteIcon from '@material-ui/icons/Favorite';
+import ShareIcon from '@material-ui/icons/Share';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+
 import Alert from "@material-ui/lab/Alert";
 
 import * as anchor from "@project-serum/anchor";
@@ -18,6 +35,32 @@ import {
   mintOneToken,
   shortenAddress,
 } from "./candy-machine";
+
+//import { mergeClasses } from "@material-ui/styles";
+//import { isClassExpression } from "typescript";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    maxWidth: 345,
+  },
+  media: {
+    height: 0,
+    paddingTop: '56.25%', // 16:9
+  },
+  expand: {
+    transform: 'rotate(0deg)',
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', {
+      duration: theme.transitions.duration.shortest,
+    }),
+  },
+  expandOpen: {
+    transform: 'rotate(180deg)',
+  },
+  avatar: {
+    backgroundColor: red[500],
+  },
+}));
 
 const ConnectButton = styled(WalletDialogButton)``;
 
@@ -37,6 +80,7 @@ export interface HomeProps {
 }
 
 const Home = (props: HomeProps) => {
+  // original
   const [balance, setBalance] = useState<number>();
   const [isActive, setIsActive] = useState(false); // true when countdown completes
   const [isSoldOut, setIsSoldOut] = useState(false); // true when items remaining is zero
@@ -157,17 +201,57 @@ const Home = (props: HomeProps) => {
       setCandyMachine(candyMachine);
     })();
   }, [wallet, props.candyMachineId, props.connection]);
+  // end original
+
+  const classes = useStyles();
+  const [expanded, setExpanded] = React.useState(false);
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
+
+  interface AlertState {
+    open: boolean;
+    message: string;
+    severity: "success" | "info" | "warning" | "error" | undefined; 
+  }
+
+  const renderCounter = ({ days, hours, minutes, seconds, completed }: any) => {
+    return (
+      <CounterText>
+        {hours} hours, {minutes} minutes, {seconds} seconds
+      </CounterText>
+    );
+  };
 
   return (
     <main>
-      {wallet.connected && (
-        <p>Address: {shortenAddress(wallet.publicKey?.toBase58() || "")}</p>
-      )}
-
-      {wallet.connected && (
-        <p>Balance: {(balance || 0).toLocaleString()} SOL</p>
-      )}
-
+    <Card className={classes.root}>
+      <CardHeader
+        avatar={
+          <Avatar aria-label="recipe" className={classes.avatar}>
+            RAF
+          </Avatar>
+        }
+        action={
+          <IconButton aria-label="settings">
+            <MoreVertIcon />
+          </IconButton>
+        }
+        title="Kodama Mint"
+        subheader="On sale 9/23/2021"
+      />
+      <CardMedia
+        className={classes.media}
+        image="https://ck3uywurgxtn4atai6pkjhai2zus7qwx7vhkxtuyqg4l2p6zgoia.arweave.net/ErdMWpE15t4CYEeepJwI1mkvwtf9TqvOmIG4vT_ZM5A"
+        title="Time to buy your Kodama"
+      />
+      <CardContent>
+        <Typography variant="body2" color="textSecondary" component="p">
+          This is the best little ghostie you'll ever see!
+        </Typography>
+      </CardContent>
+      <CardActions disableSpacing>
       <MintContainer>
         {!wallet.connected ? (
           <ConnectButton>Connect Wallet</ConnectButton>
@@ -196,8 +280,45 @@ const Home = (props: HomeProps) => {
           </MintButton>
         )}
       </MintContainer>
-
-      <Snackbar
+        <IconButton aria-label="share">
+          <ShareIcon />
+        </IconButton>
+        <IconButton
+          className={clsx(classes.expand, {
+            [classes.expandOpen]: expanded,
+          })}
+          onClick={handleExpandClick}
+          aria-expanded={expanded}
+          aria-label="show more"
+        >
+          <ExpandMoreIcon />
+        </IconButton>
+      </CardActions>
+      <Collapse in={expanded} timeout="auto" unmountOnExit>
+        <CardContent>
+            <Typography paragraph>
+              {wallet.connected && (
+                <p>Address: {shortenAddress(wallet.publicKey?.toBase58() || "")}</p>
+              )}
+            </Typography>
+            <Typography paragraph>
+            {wallet.connected && (
+               <p>Balance: {(balance || 0).toLocaleString()} SOL</p>
+            )}
+            </Typography>
+            <Typography paragraph>
+              Second Typography Paragraph.
+            </Typography>
+            <Typography paragraph>
+              Third Typography Paragraph
+            </Typography>
+            <Typography>
+              Fourth Typography Paragraph
+            </Typography>  
+        </CardContent>
+      </Collapse>
+    </Card>
+    <Snackbar
         open={alertState.open}
         autoHideDuration={6000}
         onClose={() => setAlertState({ ...alertState, open: false })}
@@ -211,20 +332,6 @@ const Home = (props: HomeProps) => {
       </Snackbar>
     </main>
   );
-};
-
-interface AlertState {
-  open: boolean;
-  message: string;
-  severity: "success" | "info" | "warning" | "error" | undefined;
 }
-
-const renderCounter = ({ days, hours, minutes, seconds, completed }: any) => {
-  return (
-    <CounterText>
-      {hours} hours, {minutes} minutes, {seconds} seconds
-    </CounterText>
-  );
-};
 
 export default Home;
